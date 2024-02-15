@@ -22,16 +22,30 @@ interface UserDoc extends mongoose.Document {
   password: string;
 }
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    }
   },
-  password: {
-    type: String,
-    required: true
+  {
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.password;
+        delete ret.__v;
+      }
+    }
   }
-});
+);
+
+//Inside of here in toJSON, we're going to define a set of properties that are going to help Mongoose take our user document and turn it into JSON.
 
 //important concept here don't use ()=> arrow function in the argument
 //for more clearance watch the video
