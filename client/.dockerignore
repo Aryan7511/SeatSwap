@@ -1,0 +1,7 @@
+# Ignore node_modules directory
+node_modules
+
+# We're also going to list out this dot next folder.
+#we did not create that folder.
+#Instead, it was created automatically by next when we started up the server on our local machine.
+.next

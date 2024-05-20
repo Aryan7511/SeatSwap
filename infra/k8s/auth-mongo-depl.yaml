@@ -1,32 +1,36 @@
+# This file defines a Deployment and a Service for a MongoDB instance for the authentication service
+
+# Define a Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-mongo-depl
+  name: auth-mongo-depl # Name of the Deployment
 spec:
-  replicas: 1
+  replicas: 1 # Number of pod replicas to run
   selector:
     matchLabels:
-      app: auth-mongo
+      app: auth-mongo # Select pods with the label 'app: auth-mongo'
   template:
     metadata:
       labels:
-        app: auth-mongo
+        app: auth-mongo # Apply the label 'app: auth-mongo' to the pods created by this template
     spec:
       containers:
-      - name: auth-mongo
-        image: mongo
+        - name: auth-mongo # Name of the container
+          image: mongo # Docker image to use for this container
 
 ---
+# Define a Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-mongo-srv
+  name: auth-mongo-srv # Name of the Service
 spec:
-  type: ClusterIP
+  type: ClusterIP # Service type; ClusterIP exposes the Service on a cluster-internal IP
   selector:
-    app: auth-mongo
+    app: auth-mongo # Select pods with the label 'app: auth-mongo'
   ports:
-  - name: db
-    protocol: TCP
-    port: 27017
-    targetPort: 27017      
+    - name: db # Name of the port
+      protocol: TCP # Protocol to use
+      port: 27017 # Port on which the Service is exposed
+      targetPort: 27017 # Port on the pod that the Service should forward traffic to

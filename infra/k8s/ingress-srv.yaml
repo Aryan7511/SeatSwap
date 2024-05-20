@@ -1,19 +1,29 @@
+# This file defines an Ingress resource to manage external access to services in the cluster
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-service
+  name: ingress-service # Name of the Ingress resource
   annotations:
-    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/use-regex: "true" # Annotation to enable regex support in paths
+
 spec:
-  ingressClassName: nginx
+  ingressClassName: nginx # Specifies the Ingress class to be used (nginx in this case)
   rules:
-    - host: ticketing.dev
+    - host: ticketing.dev # Hostname for which this rule applies
       http:
-        paths:
-          - path: /api/users/?(.*)
+        paths: # Ingress controller is going to match the paths in order here from top to bottom
+          - path: /api/users/?(.*) # Path pattern for routing, with regex support
+            pathType: ImplementationSpecific # Path matching behavior (specific to the ingress controller)
+            backend:
+              service:
+                name: auth-srv # Name of the service to route traffic to
+                port:
+                  number: 3000 # Port on the service to route traffic to
+          - path: /?(.*)
             pathType: ImplementationSpecific
             backend:
               service:
-                name: auth-srv
+                name: client-srv # Name of the service to route traffic to
                 port:
-                  number: 3000
+                  number: 3000 # Port on the service to route traffic to

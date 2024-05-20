@@ -1,38 +1,40 @@
+# Define a Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-depl
+  name: auth-depl # Name of the Deployment
 spec:
-  replicas: 1
+  replicas: 1 # Number of pod replicas to run
   selector:
     matchLabels:
-      app: auth
+      app: auth # Select pods with the label 'app: auth'
   template:
     metadata:
       labels:
-        app: auth
+        app: auth # Apply the label 'app: auth' to the pods created by this template
     spec:
       containers:
-      - name: auth
-        image: comauro7511/auth
-        env:
-          - name: JWT_KEY
-            valueFrom:
-              secretKeyRef:
-                name: jwt-secret
-                key: JWT_KEY
+        - name: auth # Name of the container
+          image: comauro7511/auth # Docker image to use for this container
+          env:
+            - name: JWT_KEY # Environment variable to set in the container
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret # Reference to the Kubernetes Secret named 'jwt-secret'
+                  key: JWT_KEY # The key in the Secret to use for this environment variable
 
 ---
+# Define a Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv
+  name: auth-srv # Name of the Service
 spec:
-  type: ClusterIP
+  type: ClusterIP # Service type; ClusterIP exposes the Service on a cluster-internal IP
   selector:
-    app: auth
+    app: auth # Select pods with the label 'app: auth'
   ports:
-  - name: auth
-    protocol: TCP
-    port: 3000
-    targetPort: 3000        
+    - name: auth # Name of the port
+      protocol: TCP # Protocol to use
+      port: 3000 # Port on which the Service is exposed
+      targetPort: 3000 # Port on the pod that the Service should forward traffic to

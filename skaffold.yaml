@@ -1,17 +1,31 @@
+# This file defines the configuration for Skaffold, a tool for continuous development on Kubernetes
+
 apiVersion: skaffold/v4beta3
 kind: Config
+
+# Specify the Kubernetes manifests to be used
 manifests:
   rawYaml:
-    - ./infra/k8s/*
+    - ./infra/k8s/* # Path to the Kubernetes manifest files (e.g., Deployment, Service, Ingress)
+
+# Define the build settings
 build:
   local:
-    push: false
+    push: false # Indicates that the built images should not be pushed to a remote registry; they should be used locally
   artifacts:
-    - image: comauro7511/auth
-      context: auth
+    - image: comauro7511/auth # Name of the Docker image to be built
+      context: auth # Path to the directory containing the Dockerfile
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile # Name of the Dockerfile to use for building the image
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
+          - dest: . # Destination directory in the container for the synchronized files
+            src: "src/**/*.ts" # Source files to be synchronized, matching the specified pattern (all TypeScript files in the src directory and its subdirectories)
+    - image: comauro7511/client # Name of the Docker image to be built
+      context: client # Path to the directory containing the Dockerfile
+      docker:
+        dockerfile: Dockerfile # Name of the Dockerfile to use for building the image
+      sync:
+        manual:
+          - dest: . # Destination directory in the container for the synchronized files
+            src: "**/*.js" # Synchronize all JavaScript files recursively
