@@ -10,6 +10,9 @@ And so I found that it's easier to just add on async from the get go and not hav
 on adding it on at some point in the future or forgetting to add it on and being given some kind of error. */
 
 it('returns a 201 on successful signup', async () => {
+  //here whether you write return does not matter it will await behind the scene. but as only request is here
+  // so you can use return keyword but if multiple request there then use await keyword so that they wait for following requests but in the last request
+  // still you can use return bcoz that will be awaited by default behind the scene
   return request(app)
     .post('/api/users/signup')
     .send({
