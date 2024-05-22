@@ -1,4 +1,4 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import { Password } from '../services/password';
 
 /*All these interfaces that made is for removing the issues 

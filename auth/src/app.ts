@@ -6,8 +6,7 @@ import { currentUserRouter } from './routes/current-user';
 import { signupRouter } from './routes/signup';
 import { signinRouter } from './routes/signin';
 import { signoutRouter } from './routes/signout';
-import { errorHandler } from './middlewares/error-handler';
-import { NotFoundError } from './errors/not-found-error';
+import { errorHandler, NotFoundError } from '@sswaptickets/common';
 
 const app = express();
 /*we are just adding in this little step right here to make sure that Express is aware
