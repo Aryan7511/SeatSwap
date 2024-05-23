@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-depl # Name of the Deployment
+  name: tickets-depl # Name of the Deployment
 spec:
   replicas: 1 # Number of pod replicas to run
   selector:
     matchLabels:
-      app: auth # Select pods with the label 'app: auth'
+      app: tickets # Select pods with the label 'app: tickets'
   template:
     metadata:
       labels:
-        app: auth # Apply the label 'app: auth' to the pods created by this template
+        app: tickets # Apply the label 'app: tickets' to the pods created by this template
     spec:
       containers:
-        - name: auth # Name of the container
-          image: comauro7511/auth # Docker image to use for this container
+        - name: tickets # Name of the container
+          image: comauro7511/tickets # Docker image to use for this container
           env:
             - name: MONGO_URI # Environment variable to set in the container
-              value: 'mongodb://auth-mongo-srv:27017/auth'
+              value: 'mongodb://tickets-mongo-srv:27017/tickets'
             - name: JWT_KEY # Environment variable to set in the container
               valueFrom:
                 secretKeyRef:
@@ -30,13 +30,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv # Name of the Service
+  name: tickets-srv # Name of the Service
 spec:
   type: ClusterIP # Service type; ClusterIP exposes the Service on a cluster-internal IP
   selector:
-    app: auth # Select pods with the label 'app: auth'
+    app: tickets # Select pods with the label 'app: tickets'
   ports:
-    - name: auth # Name of the port
+    - name: tickets # Name of the port
       protocol: TCP # Protocol to use
       port: 3000 # Port on which the Service is exposed
       targetPort: 3000 # Port on the pod that the Service should forward traffic to

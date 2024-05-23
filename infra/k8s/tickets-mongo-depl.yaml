@@ -1,0 +1,34 @@
+# Define a Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tickets-mongo-depl # Name of the Deployment
+spec:
+  replicas: 1 # Number of pod replicas to run
+  selector:
+    matchLabels:
+      app: tickets-mongo # Select pods with the label 'app: tickets-mongo'
+  template:
+    metadata:
+      labels:
+        app: tickets-mongo # Apply the label 'app: tickets-mongo' to the pods created by this template
+    spec:
+      containers:
+        - name: tickets-mongo # Name of the container
+          image: mongo # Docker image to use for this container
+
+---
+# Define a Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-mongo-srv # Name of the Service
+spec:
+  type: ClusterIP # Service type; ClusterIP exposes the Service on a cluster-internal IP
+  selector:
+    app: tickets-mongo # Select pods with the label 'app: tickets-mongo'
+  ports:
+    - name: db # Name of the port
+      protocol: TCP # Protocol to use
+      port: 27017 # Port on which the Service is exposed
+      targetPort: 27017 # Port on the pod that the Service should forward traffic to

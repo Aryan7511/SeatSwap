@@ -10,7 +10,7 @@ declare global {
 let mongo: any;
 //So this is a hook that's going to run before all of our tests
 beforeAll(async () => {
-  process.env.JWT_KEY = 'asdf';
+  process.env.JWT_KEY = 'asdfasdf';
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
   await mongoose.connect(mongoUri, {});
