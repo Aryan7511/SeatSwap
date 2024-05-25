@@ -2,8 +2,8 @@ import { Response, Request, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 interface UserPayload {
-  id: String;
-  email: String;
+  id: string;
+  email: string;
 }
 
 //adding additional property currentUser to Request interface
