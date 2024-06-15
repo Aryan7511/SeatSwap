@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats-depl # Name of the Deployment
+spec:
+  replicas: 1 # Number of pod replicas to run
+  selector:
+    matchLabels:
+      app: nats # Select pods with the label 'app: nats'
+  template:
+    metadata:
+      labels:
+        app: nats # Apply the label 'app: nats' to the pods created by this template
+    spec:
+      containers:
+        - name: nats # Name of the container
+          image: nats-streaming:0.17.0 # Docker image to use for this container
+          args: # Arguments to pass to the NATS container
+            [
+              '-p', '4222', # Port for client connections
+              '-m', '8222', # Port for monitoring
+              '-hbi', '5s', # Interval for sending heartbeat messages
+              '-hbt', '5s', # Heartbeat timeout
+              '-hbf', '2', # Maximum number of failed heartbeats
+              '-SD', # Enable file-based storage for streaming data
+              '-cid', 'ticketing', # Cluster ID for the NATS Streaming Server
+            ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-srv # Name of the Service
+spec:
+  type: ClusterIP # Service type; ClusterIP exposes the Service on a cluster-internal IP
+  selector:
+    app: nats # Select pods with the label 'app: nats'
+  ports:
+    - name: client # Name of the client port
+      protocol: TCP # Protocol to use
+      port: 4222 # Port on which the Service is exposed for clients
+      targetPort: 4222 # Port on the pod that the Service should forward client traffic to
+    - name: monitoring # Name of the monitoring port
+      protocol: TCP # Protocol to use
+      port: 8222 # Port on which the Service is exposed for monitoring
+      targetPort: 8222 # Port on the pod that the Service should forward monitoring traffic to
