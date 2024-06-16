@@ -1,7 +1,8 @@
-import nats, { Message } from 'node-nats-streaming';
+import nats, { Message, Stan } from 'node-nats-streaming';
 import { randomBytes } from 'crypto';
+import { TicketCreatedListener } from './events/ticket-created-listener';
 
-// console.clear();
+console.clear();
 
 // Connect to the NATS streaming server with a random client ID
 const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
@@ -17,24 +18,7 @@ stan.on('connect', () => {
     process.exit();
   });
 
-  const options = stan
-    .subscriptionOptions()
-    .setManualAckMode(true)
-    .setDeliverAllAvailable()
-    .setDurableName('order-service');
-  const subscription = stan.subscribe(
-    'ticket:created', // Subject to subscribe to
-    'orders-service-queue-group', // Queue group name
-    options // Subscription options
-  );
-  subscription.on('message', (msg: Message) => {
-    const data = msg.getData();
-    if (typeof data === 'string') {
-      console.log(`Recieved event #${msg.getSequence()}, with data: ${data}`);
-    }
-
-    msg.ack(); // Manually acknowledge the message to the NATS server
-  });
+  new TicketCreatedListener(stan).listen();
 });
 
 // Event listener to handle SIGINT (Ctrl+C)
@@ -42,3 +26,4 @@ process.on('SIGINT', () => stan.close());
 
 // Event listener to handle SIGTERM (termination request)
 process.on('SIGTERM', () => stan.close());
+
