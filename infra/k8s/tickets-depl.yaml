@@ -17,6 +17,14 @@ spec:
         - name: tickets # Name of the container
           image: comauro7511/tickets # Docker image to use for this container
           env:
+            - name: NATS_CLIENT_ID # Environment variable to set the NATS client ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL # Environment variable to set the NATS URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID # Environment variable to set the NATS cluster ID
+              value: ticketing
             - name: MONGO_URI # Environment variable to set in the container
               value: 'mongodb://tickets-mongo-srv:27017/tickets'
             - name: JWT_KEY # Environment variable to set in the container

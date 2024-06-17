@@ -1,7 +1,5 @@
 import { Stan } from 'node-nats-streaming';
 import { Subjects } from './subjects';
-import { resolve } from 'path';
-import { rejects } from 'assert';
 
 interface Event {
   subject: Subjects;

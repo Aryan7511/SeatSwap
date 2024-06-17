@@ -2,6 +2,11 @@ import request from 'supertest';
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
 
+import { natsWrapper } from '../../nats-wrapper';
+/*But once again, just even inside of our test file is going to redirect that import for us and it's going to instead give us the mock. 
+We're going to try to get the real Nats wrapper, but it's going to give us the mock one instead.
+ */
+
 it('has a route handler listening to /api/tickets for post requests', async () => {
   const response = await request(app).post('/api/tickets').send({});
 
@@ -27,7 +32,7 @@ it('returns an error if an invalid title is provided', async () => {
     .set('Cookie', global.signin())
     .send({
       title: '',
-      price: 10,
+      price: 10
     })
     .expect(400);
 
@@ -35,7 +40,7 @@ it('returns an error if an invalid title is provided', async () => {
     .post('/api/tickets')
     .set('Cookie', global.signin())
     .send({
-      price: 10,
+      price: 10
     })
     .expect(400);
 });
@@ -46,7 +51,7 @@ it('returns an error if an invalid price is provided', async () => {
     .set('Cookie', global.signin())
     .send({
       title: 'asldkjf',
-      price: -10,
+      price: -10
     })
     .expect(400);
 
@@ -54,7 +59,7 @@ it('returns an error if an invalid price is provided', async () => {
     .post('/api/tickets')
     .set('Cookie', global.signin())
     .send({
-      title: 'laskdfj',
+      title: 'laskdfj'
     })
     .expect(400);
 });
@@ -70,7 +75,7 @@ it('creates a ticket with valid inputs', async () => {
     .set('Cookie', global.signin())
     .send({
       title,
-      price: 20,
+      price: 20
     })
     .expect(201);
 
@@ -78,4 +83,19 @@ it('creates a ticket with valid inputs', async () => {
   expect(tickets.length).toEqual(1);
   expect(tickets[0].price).toEqual(20);
   expect(tickets[0].title).toEqual(title);
+});
+
+it('publishes an event', async () => {
+  const title = 'asldkfj';
+
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.signin())
+    .send({
+      title,
+      price: 20,
+    })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

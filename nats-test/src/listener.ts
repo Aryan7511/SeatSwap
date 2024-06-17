@@ -1,4 +1,4 @@
-import nats, { Message, Stan } from 'node-nats-streaming';
+import nats from 'node-nats-streaming';
 import { randomBytes } from 'crypto';
 import { TicketCreatedListener } from './events/ticket-created-listener';
 
@@ -26,4 +26,3 @@ process.on('SIGINT', () => stan.close());
 
 // Event listener to handle SIGTERM (termination request)
 process.on('SIGTERM', () => stan.close());
-
