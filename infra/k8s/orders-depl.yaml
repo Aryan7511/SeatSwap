@@ -1,0 +1,50 @@
+# Define a Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-depl # Name of the Deployment
+spec:
+  replicas: 1 # Number of pod replicas to run
+  selector:
+    matchLabels:
+      app: orders # Select pods with the label 'app: orders'
+  template:
+    metadata:
+      labels:
+        app: orders # Apply the label 'app: orders' to the pods created by this template
+    spec:
+      containers:
+        - name: orders # Name of the container
+          image: comauro7511/orders # Docker image to use for this container
+          env:
+            - name: NATS_CLIENT_ID # Environment variable to set the NATS client ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL # Environment variable to set the NATS URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID # Environment variable to set the NATS cluster ID
+              value: ticketing
+            - name: MONGO_URI # Environment variable to set in the container
+              value: 'mongodb://orders-mongo-srv:27017/orders'
+            - name: JWT_KEY # Environment variable to set in the container
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret # Reference to the Kubernetes Secret named 'jwt-secret'
+                  key: JWT_KEY # The key in the Secret to use for this environment variable
+
+---
+# Define a Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-srv # Name of the Service
+spec:
+  type: ClusterIP # Service type; ClusterIP exposes the Service on a cluster-internal IP
+  selector:
+    app: orders # Select pods with the label 'app: orders'
+  ports:
+    - name: orders # Name of the port
+      protocol: TCP # Protocol to use
+      port: 3000 # Port on which the Service is exposed
+      targetPort: 3000 # Port on the pod that the Service should forward traffic to

@@ -37,3 +37,11 @@ build:
         manual:
           - dest: . # Destination directory in the container for the synchronized files
             src: "src/**/*.ts" # Source files to be synchronized, matching the specified pattern (all TypeScript files in the src directory and its subdirectories)
+    - image: comauro7511/orders # Name of the Docker image to be built
+      context: orders # Path to the directory containing the Dockerfile
+      docker:
+        dockerfile: Dockerfile # Name of the Dockerfile to use for building the image
+      sync:
+        manual:
+          - dest: . # Destination directory in the container for the synchronized files
+            src: "src/**/*.ts" # Source files to be synchronized, matching the specified pattern (all TypeScript files in the src directory and its subdirectories)
