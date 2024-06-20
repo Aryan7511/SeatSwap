@@ -8,6 +8,8 @@ import {
 } from '@sswaptickets/common';
 import { Order } from '../models/order';
 import mongoose from 'mongoose';
+import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -22,7 +24,7 @@ router.delete(
         throw new BadRequestError('Invalid order ID');
       }
 
-      const order = await Order.findById(orderId);
+      const order = await Order.findById(orderId).populate('ticket');
 
       if (!order) {
         throw new NotFoundError();
@@ -33,7 +35,13 @@ router.delete(
       order.status = OrderStatus.Cancelled;
       await order.save();
 
-      // publishing an event saying this was cancelled!
+      // publishing an event saying this was cancelled
+      new OrderCancelledPublisher(natsWrapper.client).publish({
+        id: order.id,
+        ticket: {
+          id: order.ticket.id
+        }
+      });
 
       res.status(204).send();
       /*If this was really a delete handler, we should technically also send back specifically a status of 204, 
