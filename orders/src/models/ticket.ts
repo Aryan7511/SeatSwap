@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Order, OrderStatus } from './order';
 
 interface TicketAttrs {
+  id: string;
   title: string;
   price: number;
 }
@@ -43,7 +44,11 @@ const ticketSchema = new mongoose.Schema(
 
 // Define a static method 'build' on the Ticket schema
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
-  return new Ticket(attrs);
+  return new Ticket({
+    _id: attrs.id,
+    title: attrs.title,
+    price: attrs.price
+  });
 };
 
 // Define an instance method 'isReserved' on the Ticket schema
@@ -56,7 +61,7 @@ ticketSchema.methods.isReserved = async function () {
   const existingOrder = await Order.findOne({
     ticket: this,
     status: {
-      $in: [  
+      $in: [
         OrderStatus.Created,
         OrderStatus.AwaitingPayment,
         OrderStatus.Complete
