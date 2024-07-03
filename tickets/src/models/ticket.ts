@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 // Interface that describes the properties required to create a new Ticket
 interface TicketAttrs {
@@ -12,6 +13,7 @@ interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
   userId: string;
+  version: number;
 }
 
 // Interface that describes the properties that a Ticket Model has
@@ -23,16 +25,16 @@ const ticketSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: true
     },
     price: {
       type: Number,
-      required: true,
+      required: true
     },
     userId: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   {
     // Configure the schema to transform the returned JSON object
@@ -40,10 +42,14 @@ const ticketSchema = new mongoose.Schema(
       transform(doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-      },
-    },
+      }
+    }
   }
 );
+
+// Set the version key for optimistic concurrency control
+ticketSchema.set('versionKey', 'version');
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 // Static method to create a new ticket and enforce TypeScript checking
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
