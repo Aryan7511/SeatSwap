@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Order, OrderStatus } from './order';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 interface TicketAttrs {
   id: string;
@@ -11,12 +12,17 @@ interface TicketAttrs {
 export interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
+  version: number;
   isReserved(): Promise<boolean>; // Method to check if the ticket is reserved
 }
 
 // Define the structure of the Ticket model (includes static methods)
 interface TicketModel extends mongoose.Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc;
+  findByEvent(event: {
+    id: string;
+    version: number;
+  }): Promise<TicketDoc | null>;
 }
 
 const ticketSchema = new mongoose.Schema(
@@ -41,6 +47,17 @@ const ticketSchema = new mongoose.Schema(
     }
   }
 );
+
+// Set the version key for optimistic concurrency control
+ticketSchema.set('versionKey', 'version');
+ticketSchema.plugin(updateIfCurrentPlugin);
+
+ticketSchema.statics.findByEvent = (event: { id: string; version: number }) => {
+  return Ticket.findOne({
+    _id: event.id,
+    version: event.version - 1
+  });
+};
 
 // Define a static method 'build' on the Ticket schema
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
