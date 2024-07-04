@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { OrderStatus } from '@sswaptickets/common';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { TicketDoc } from './ticket';
 export { OrderStatus };
 
@@ -51,6 +52,10 @@ const orderSchema = new mongoose.Schema(
     }
   }
 );
+
+// Set the version key for optimistic concurrency control
+orderSchema.set('versionKey', 'version');
+orderSchema.plugin(updateIfCurrentPlugin);
 
 orderSchema.statics.build = (attrs: OrderAttrs) => {
   return new Order(attrs);
