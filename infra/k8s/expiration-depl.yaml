@@ -1,0 +1,29 @@
+# Define a Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expiration-depl # Name of the Deployment
+spec:
+  replicas: 1 # Number of pod replicas to run
+  selector:
+    matchLabels:
+      app: expiration # Select pods with the label 'app: expiration'
+  template:
+    metadata:
+      labels:
+        app: expiration # Apply the label 'app: expiration' to the pods created by this template
+    spec:
+      containers:
+        - name: expiration # Name of the container
+          image: comauro7511/expiration # Docker image to use for this container
+          env:
+            - name: NATS_CLIENT_ID # Environment variable to set the NATS client ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL # Environment variable to set the NATS URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID # Environment variable to set the NATS cluster ID
+              value: ticketing
+            - name: REDIS_HOST  # Environment variable to set the Redis host
+              value: expiration-redis-srv  # Redis service name
