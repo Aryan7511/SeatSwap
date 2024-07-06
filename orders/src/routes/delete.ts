@@ -44,7 +44,7 @@ router.delete(
         }
       });
 
-      res.status(204).send(order);
+      res.status(204).send();
       /*If this was really a delete handler, we should technically also send back specifically a status of 204, 
       which indicates that a record was deleted.
       Again, we're not really deleting a record per se, we're cancelling it, but we're kind of pretending

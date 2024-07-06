@@ -34,6 +34,13 @@ spec:
                 name: orders-srv # Name of the service to route traffic to
                 port:
                   number: 3000 # Port on the service to route traffic to
+          - path: /api/payments/?(.*) # Path pattern for routing, with regex support
+            pathType: ImplementationSpecific # Path matching behavior (specific to the ingress controller)
+            backend:
+              service:
+                name: payments-srv # Name of the service to route traffic to
+                port:
+                  number: 3000 # Port on the service to route traffic to
           - path: /?(.*)
             pathType: ImplementationSpecific
             backend:
