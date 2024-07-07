@@ -19,7 +19,7 @@ const router = express.Router();
 router.post(
   '/api/payments',
   requireAuth,
-  [body('token').not().isEmpty(), body('orderId').not().isEmpty()],
+  [body('orderId').not().isEmpty()],
   validateRequest,
   async (req: Request, res: Response, next: NextFunction) => {
     const { token, orderId } = req.body;
@@ -38,8 +38,8 @@ router.post(
         throw new BadRequestError('Cannot pay for an cancelled order');
       }
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: order.price * 100, // in rupees
-        currency: 'inr',
+        amount: order.price * 100, // in cents
+        currency: 'usd',
         payment_method_types: ['card'],
         payment_method: 'pm_card_visa', // replace with actual payment method id
         confirm: true,
@@ -61,6 +61,7 @@ router.post(
 
       res.status(201).json({ id: payment.id });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
