@@ -8,7 +8,8 @@ declare global {
 
 jest.mock('../nats-wrapper');
 
-// process.env.STRIPE_KEY = 'paste_your_secret_key_for_testing_purpose';
+process.env.STRIPE_KEY =
+  'sk_test_51NMaskSCTxnRE6R1hpnmKDCzucDCZH7wa7u6ekY0xYixkmsEbiyjOsCrBzKaV84JKXll05bCms5L7MH1kmJSwrb400vV3qsqkd';
 
 let mongo: any;
 //So this is a hook that's going to run before all of our tests

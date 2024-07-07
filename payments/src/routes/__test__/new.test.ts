@@ -90,7 +90,7 @@ it('returns a 201 with valid inputs', async () => {
   });
 
   expect(stripePayment).toBeDefined();
-  expect(stripePayment!.currency).toEqual('inr');
+  expect(stripePayment!.currency).toEqual('usd');
 
   const paymentFromDb = await Payment.findOne({
     orderId: order.id,
