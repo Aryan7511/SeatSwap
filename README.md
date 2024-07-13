@@ -33,7 +33,9 @@ This project utilizes a diverse tech stack to ensure seamless integration and co
 - **Payments**: Manages payment processes, including canceling payments and updating other services upon successful transactions.
 - **Expiration**: Locks tickets for 2 minutes upon purchase, after which the tickets are unlocked.
 
+### System Diagram:
 
+![System Diagram](./System_diagram.png)
 
 ## <a name="quick-start">🤸 Quick Start</a>
 ### Prerequisites
